@@ -10,7 +10,12 @@ module.exports = gql`
     likes: [Like]!
     likeCount: Int!
     commentCount: Int!
+    user: User
   }
+  # enum UserInfo {
+  #   id
+  #   email
+  # }
   type Comment {
     id: ID!
     createdAt: String!
@@ -24,9 +29,9 @@ module.exports = gql`
   }
   type User {
     id: ID!
-    email: String!
+    email: String
     token: String!
-    username: String!
+    username: String
     createdAt: String!
   }
   input RegisterInput {
@@ -37,6 +42,7 @@ module.exports = gql`
   }
   type Query {
     getPosts: [Post]
+    getUsers: [User]
     getPost(postId: ID!): Post
   }
   type Mutation {

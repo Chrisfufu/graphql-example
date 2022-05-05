@@ -1,5 +1,5 @@
 module.exports = {
   MONGODB:
-    'mongodb+srv://classsed:6lxxxlexaTslHLPe@cluster0-pcsru.mongodb.net/merng?retryWrites=true',
+    "mongodb+srv://chrisfufu:rgn.fxj9KAG.zaw9mgm@cluster0.ffwo1.mongodb.net/merng?retryWrites=true&w=majority",
   SECRET_KEY: 'some very secret key'
 };
