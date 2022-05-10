@@ -1,14 +1,16 @@
-const { AuthenticationError, UserInputError } = require("apollo-server");
+import { AuthenticationError, UserInputError } from "apollo-server";
 
-const Post = require("../../models/Post");
-const User = require("../../models/User");
-const checkAuth = require("../../util/check-auth");
+import Post from "../../models/Post.js";
+import User from "../../models/User.js";
+import checkAuth from "../../util/check-auth.js";
 
-module.exports = {
+export default {
 	Query: {
 		async getPosts() {
 			try {
-				const posts = await Post.find().populate("user").sort({ createdAt: -1 });
+				const posts = await Post.find()
+					.populate("user comments")
+					.sort({ createdAt: -1 });
 				// let userInfo = await User.findById(posts.user)
 				// console.log(userInfo);
 				return posts;
@@ -18,9 +20,7 @@ module.exports = {
 		},
 		async getPost(_, { postId }) {
 			try {
-				const post = await Post.findById(postId)
-					.populate("user")
-					.populate("comments");
+				const post = await Post.findById(postId).populate("user comments");
 				// console.log(post);
 				if (post) {
 					return post;
@@ -113,9 +113,9 @@ module.exports = {
 			} else throw new UserInputError("Post not found");
 		},
 	},
-	Subscription: {
-		newPost: {
-			subscribe: (_, __, { pubsub }) => pubsub.asyncIterator("NEW_POST"),
-		},
-	},
+	// Subscription: {
+	// 	newPost: {
+	// 		subscribe: (_, __, { pubsub }) => pubsub.asyncIterator("NEW_POST"),
+	// 	},
+	// },
 };

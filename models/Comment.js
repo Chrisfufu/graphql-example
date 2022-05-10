@@ -1,17 +1,17 @@
-const { model, Schema } = require("mongoose");
+import mongoose from "mongoose";
 
-const CommentSchema = new Schema({
+const CommentSchema = new mongoose.Schema({
 	body: String,
 	username: String,
 	createdAt: String,
 	post: {
-		type: Schema.Types.ObjectId,
+		type: mongoose.Schema.Types.ObjectId,
 		ref: "Post",
 	},
 	user: {
-		type: Schema.Types.ObjectId,
+		type: mongoose.Schema.Types.ObjectId,
 		ref: "User",
 	},
 });
 
-module.exports = model("Comment", CommentSchema);
+export default mongoose.model("Comment", CommentSchema);

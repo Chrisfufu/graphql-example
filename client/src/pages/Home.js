@@ -11,9 +11,9 @@ function Home() {
   const { user } = useContext(AuthContext);
   const {
     loading,
-    data: { getPosts: posts }
+    data: {getPosts: posts}, err
   } = useQuery(FETCH_POSTS_QUERY);
-
+  console.log('data', posts, err);
   return (
     <Grid columns={3}>
       <Grid.Row className="page-title">

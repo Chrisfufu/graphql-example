@@ -1,6 +1,6 @@
-const { gql } = require("apollo-server");
+import { gql } from "apollo-server-express"
 
-module.exports = gql`
+export default gql`
 	type Post {
 		id: ID!
 		body: String!
@@ -20,11 +20,11 @@ module.exports = gql`
 		id: ID!
 		createdAt: String!
 		username: String!
-		body: String!
+		body: String
 	}
 	type Like {
 		id: ID!
-		createdAt: String!
+		createdAt: String
 		username: String!
 	}
 	type User {
@@ -40,6 +40,13 @@ module.exports = gql`
 		confirmPassword: String!
 		email: String!
 	}
+	scalar Upload
+
+	type File {
+		filename: String!
+		mimetype: String!
+		encoding: String!
+	}
 	type Query {
 		getPosts: [Post]
 		getUsers: [User]
@@ -54,8 +61,9 @@ module.exports = gql`
 		createComment(postId: String!, body: String!): Comment!
 		deleteComment(postId: ID!, commentId: ID!): Post!
 		likePost(postId: ID!): Post!
+		singleUpload(file: Upload!): File!
 	}
-	type Subscription {
-		newPost: Post!
-	}
+	# type Subscription {
+	# 	newPost: Post!
+	# }
 `;

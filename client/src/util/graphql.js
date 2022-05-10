@@ -11,13 +11,13 @@ export const FETCH_POSTS_QUERY = gql`
       likes {
         username
       }
-      commentCount
-      comments {
-        id
-        username
-        createdAt
-        body
-      }
+      # commentCount
+      # comments {
+      #   id
+      #   username
+      #   createdAt
+      #   body
+      # }
     }
   }
 `;
