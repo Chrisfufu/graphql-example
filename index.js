@@ -9,6 +9,10 @@ import {
 import { finished } from "stream/promises";
 import mongoose from "mongoose";
 
+// import {
+// 	schemaDirectives
+// } from './graphql/directives/index.js';
+
 import typeDefs from "./graphql/typeDefs/index.js";
 import resolvers from "./graphql/resolvers/index.js";
 import config from "./config.js";
@@ -31,7 +35,8 @@ app.use(express.static(join(__dirname, "./uploads")));
 const server = new ApolloServer({
 	typeDefs,
 	resolvers,
-	csrfPrevention: true, // see below for more about this
+	// schemaDirectives,
+	// csrfPrevention: true, // see below for more about this
 	cors: corsOptions,
 	context: ({ req }) => ({ req }),
 });
@@ -50,7 +55,7 @@ async function startServer() {
 		console.log("Mongo DB connection success");
 		await server.start();
 
-		server.applyMiddleware({ app });
+		server.applyMiddleware({ app, cors: true });
 
 		await new Promise((r) => app.listen({ port: PORT }, r));
 

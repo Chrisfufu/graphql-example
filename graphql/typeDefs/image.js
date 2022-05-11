@@ -9,9 +9,6 @@ export default gql`
 		encoding: String!
 	}
 	extend type Mutation {
-		singleUpload(file: Upload!): File!
+		singleUpload(file: Upload!): File! @isAuth
 	}
-	# type Subscription {
-	# 	newPost: Post!
-	# }
 `;

@@ -1,27 +1,46 @@
-
-import {
-	GraphQLUpload
-} from "graphql-upload";
-
+import { GraphQLUpload } from "graphql-upload";
+import { mkdirSync, existsSync, createWriteStream } from "fs";
 import { finished } from "stream/promises";
+import path, { join, parse } from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+
+// 👇️ "/home/john/Desktop/javascript"
+const __dirname = path.dirname(__filename);
 
 export default {
 	Upload: GraphQLUpload,
-  Mutation: {
-    singleUpload: async (parent, { file }) => {
-			const { createReadStream, filename, mimetype, encoding } = await file;
+	Mutation: {
+		singleUpload: async (parent, { file }) => {
+			try {
+				const { filename, createReadStream, mimetype, encoding } = await file;
+				console.log("filename", filename);
+				let stream = createReadStream();
 
-			// Invoking the `createReadStream` will return a Readable Stream.
-			// See https://nodejs.org/api/stream.html#stream_readable_streams
-			const stream = createReadStream();
-			console.log("aba", filename);
-			// This is purely for demonstration purposes and will overwrite the
-			// local-file-output.txt in the current working directory on EACH upload.
-			// const out = require("fs").createWriteStream(filename);
-			stream.pipe(out);
-			await finished(out);
+				let { ext, name } = parse(filename);
 
-			return { filename, mimetype, encoding };
+				name = name.replace(/([^a-z0-9 ]+)/gi, "-").replace(" ", "_");
+
+				let serverFile = join(
+					__dirname,
+					`../../uploads/${name}-${Date.now()}${ext}`
+				);
+
+				serverFile = serverFile.replace(" ", "_");
+
+				let writeStream = createWriteStream(serverFile);
+
+				await stream.pipe(writeStream);
+
+				serverFile = `http://localhost:${5000}${serverFile.split("uploads")[1]}`;
+				await finished(writeStream);
+
+				return { filename, mimetype, encoding };
+			} catch (err) {
+				console.log("err", err);
+				// throw new ApolloError(err.message);
+			}
 		},
-  }
+	},
 };
