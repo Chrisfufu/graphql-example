@@ -49,6 +49,7 @@ async function startServer() {
 		db.on("error", () => {
 			console.error("Error while connecting to DB");
 		});
+		console.log('Mongo DB connection success');
 		await server.start();
 
 		server.applyMiddleware({ app });

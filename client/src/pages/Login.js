@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import { Button, Form } from "semantic-ui-react";
 import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
+import { useHistory } from "react-router-dom";
 
 import { AuthContext } from "../context/auth";
 import { useForm } from "../util/hooks";
@@ -12,29 +13,38 @@ function Login(props) {
 	const [file, setFile] = useState(null);
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
+	const history = useHistory();
 
-
-	const [loginUser, { login_data, login_loading, login_error }] =
-		useMutation(LOGIN_USER);
+	const [loginUser, { login_data, login_loading, login_error }] = useMutation(
+		LOGIN_USER,
+		{
+			onCompleted: (data) => {
+				console.log("result, variables, context", data);
+				context.login(data.login);
+				history.push("/home");
+			},
+			onError: (err) => {
+				console.log("Err", err);
+			},
+		}
+	);
 
 	const [uploadImage, { data, loadingimageupload, error }] =
 		useMutation(IMAMGE_UPLAOD);
 
-	
-
 	function handleSubmit(e) {
 		// console.log("handleSubmit", e);
-		loginUser({ variables: { username: username, password: password } })
+		loginUser({ variables: { username: username, password: password } });
 	}
 	function onSubmitfile(e) {
 		e.preventDefault();
 		// console.log("file", file);
 		uploadImage({ variables: { file: file } })
 			.then((res) => {
-				console.log(res);
+				console.log("res", res);
 			})
 			.catch((err) => {
-				console.error(err);
+				console.log("err", err);
 			});
 	}
 
