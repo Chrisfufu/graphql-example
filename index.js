@@ -1,9 +1,7 @@
 import express from "express";
 import { ApolloServer, gql } from "apollo-server-express";
-import {
-	join
-} from 'path';
-import path from 'path';
+import { join } from "path";
+import path from "path";
 import {
 	GraphQLUpload,
 	graphqlUploadExpress, // A Koa implementation is also exported.
@@ -11,10 +9,10 @@ import {
 import { finished } from "stream/promises";
 import mongoose from "mongoose";
 
-import typeDefs from "./graphql/typeDefs.js";
+import typeDefs from "./graphql/typeDefs/index.js";
 import resolvers from "./graphql/resolvers/index.js";
 import config from "./config.js";
-import {fileURLToPath} from 'url';
+import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 // const pubsub = new PubSub();
@@ -44,12 +42,12 @@ async function startServer() {
 			useNewUrlParser: true,
 			useUnifiedTopology: true,
 		});
-		
+
 		let db = mongoose.connection;
 		db.on("error", () => {
 			console.error("Error while connecting to DB");
 		});
-		console.log('Mongo DB connection success');
+		console.log("Mongo DB connection success");
 		await server.start();
 
 		server.applyMiddleware({ app });
@@ -59,10 +57,8 @@ async function startServer() {
 		console.log(
 			`🚀 Server ready at http://localhost:${PORT + server.graphqlPath}`
 		);
-	} catch (err){
-		console.error(
-			`error: ${err}`
-		);
+	} catch (err) {
+		console.error(`error: ${err}`);
 	}
 }
 
