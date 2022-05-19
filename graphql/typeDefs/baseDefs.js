@@ -4,6 +4,7 @@ import {
 
 export default gql `
         directive @isAuth on FIELD_DEFINITION
+        directive @upper on FIELD_DEFINITION
         
         type Query {
             _:String

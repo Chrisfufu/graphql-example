@@ -15,9 +15,26 @@ import typeDefs from "./graphql/typeDefs/index.js";
 import resolvers from "./graphql/resolvers/index.js";
 import config from "./config.js";
 import { fileURLToPath } from "url";
+import { RedisPubSub } from 'graphql-redis-subscriptions';
+import AuthMiddleware from './middlewares/auth.js';
+import * as Redis from 'ioredis';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 // const pubsub = new PubSub();
+// const options = {
+//   host: REDIS_DOMAIN_NAME,
+//   port: PORT_NUMBER,
+//   retryStrategy: times => {
+//     // reconnect after
+//     return Math.min(times * 50, 2000);
+//   }
+// };
+// const pubsub = new RedisPubSub({
+//   // ...,
+//   publisher: new Redis(options),
+//   subscriber: new Redis(options)
+// });
 
 const PORT = process.env.port || 5000;
 const corsOptions = {
@@ -27,16 +44,24 @@ const corsOptions = {
 
 const app = express();
 app.use(graphqlUploadExpress());
+app.use(AuthMiddleware);
 
 app.use(express.static(join(__dirname, "./uploads")));
-console.log("customschema", customSchema);
+// console.log("customschema", customSchema);
 const server = new ApolloServer({
 	// typeDefs,
 	// resolvers,
-	context: ({ req }) => ({ req }),
+	context: ({ req }) => {
+		let { user, isAuth } = req;
+
+		return {
+			req,
+			user,
+			isAuth,
+		};
+	},
 	schema: customSchema,
 	csrfPrevention: true, // see below for more about this
-	
 });
 
 async function startServer() {

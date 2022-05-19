@@ -1,35 +1,29 @@
 // import apolloServerExpress from 'apollo-server-express';
 // const { ApolloError, SchemaDirectiveVisitor } = apolloServerExpress;
 
-import graphqlToolsUtils from "@graphql-tools/utils";
 import graphql from "graphql";
-const { defaultFieldResolver } = graphql;
-const { mapSchema, getDirective, MapperKind } = graphqlToolsUtils;
-// export class IsAuthDirective extends SchemaDirectiveVisitor {
-// 	visitFieldDefinition(field) {
-// 		const { resolve = defaultFieldResolver } = field;
-// 		field.resolve = async function (...args) {
-// 			let [_, {}, { user, isAuth }] = args;
-// 			if (isAuth) {
-// 				const result = await resolve.apply(this, args);
-// 				return result;
-// 			} else {
-// 				console.error("You must be the authenticated user to get this information");
-// 			}
-// 		};
-// 	}
-// }
-
-export function IsAuthDirective(field, directiveName, schema) {
-	const { resolve = defaultFieldResolver } = field;
-	field.resolve = async function (...args) {
-		console.log('args', args);
-		let [_, {}, { user, isAuth }] = args;
-		if (isAuth) {
-			const result = await resolve.apply(this, args);
-			return result;
-		} else {
-			console.error("You must be the authenticated user to get this information");
-		}
-	};
+import { getDirective } from "@graphql-tools/utils";
+// import {
+// 	defaultFieldResolver
+// } from "graphql";
+export function isAuthDirective(field, directiveName, schema) {
+	// console.log('field::', field);
+	const isAuthCustom = getDirective(schema, field, directiveName)?.[0];
+	
+	if (isAuthCustom){
+		const { resolve = defaultFieldResolver } = field;
+		field.resolve = async function (...args) {
+			let [_, {}, e] = args;
+			let [a, b, c, d] = args;
+			// let { isAuth } = c
+			// console.log('isAuth::', e);
+			if (e.isAuth) {
+				const result = await resolve.apply(this, args);
+				return result;
+			} else {
+				console.error("You must be the authenticated user to get this information");
+			}
+		};
+	}
+	
 }

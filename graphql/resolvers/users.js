@@ -31,6 +31,9 @@ export default {
 				throw new Error(err);
 			}
 		},
+		hello() {
+      return "Hello World!";
+    },
 	},
 	Mutation: {
 		async login(_, { username, password }) {

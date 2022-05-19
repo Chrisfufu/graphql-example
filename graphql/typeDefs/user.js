@@ -16,10 +16,11 @@ export default gql`
 	}
 	extend type Query {
 		getUsers: [User]
+		hello: String @upper
 	}
 	extend type Mutation {
 		register(registerInput: RegisterInput): User!
-		login(username: String!, password: String!): User!
+		login(username: String!, password: String!): User
 	}
 	# type Subscription {
 	# 	newPost: Post!
