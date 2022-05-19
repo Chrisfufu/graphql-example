@@ -6,9 +6,9 @@ import checkAuth from "../../util/check-auth.js";
 
 export default {
 	Post: {
-    likeCount: (parent) => parent.likes.length,
-    commentCount: (parent) => parent.comments.length
-  },
+		likeCount: (parent) => parent.likes.length,
+		commentCount: (parent) => parent.comments.length,
+	},
 	Query: {
 		async getPosts() {
 			try {
@@ -101,9 +101,10 @@ export default {
 
 			const post = await Post.findById(postId);
 			if (post) {
-				if (post.likes?.find((like) => like.username === username)) {
+				let found = post.likes.find((like) => like.username === username);
+				if (found) {
 					// Post already likes, unlike it
-					post.likes = post.likes?.filter((like) => like.username !== username);
+					post.likes = post.likes.filter((like) => like.username !== username);
 				} else {
 					// Not liked, like post
 					post.likes.push({
@@ -114,7 +115,9 @@ export default {
 
 				await post.save();
 				return post;
-			} else throw new UserInputError("Post not found");
+			} else {
+				console.error("Post not found");
+			}
 		},
 	},
 	// Subscription: {

@@ -31,7 +31,7 @@ export default gql`
 		encoding: String!
 	}
 	extend type Query {
-		getPosts: [Post]
+		getPosts: [Post] @isAuth
 		getPost(postId: ID!): Post
 		getPostsByUserId(userId: ID!): [Post]
 	}

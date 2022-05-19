@@ -9,9 +9,7 @@ import {
 import { finished } from "stream/promises";
 import mongoose from "mongoose";
 
-// import {
-// 	schemaDirectives
-// } from './graphql/directives/index.js';
+import customSchema from "./graphql/directives/index.js";
 
 import typeDefs from "./graphql/typeDefs/index.js";
 import resolvers from "./graphql/resolvers/index.js";
@@ -23,7 +21,7 @@ const __dirname = path.dirname(__filename);
 
 const PORT = process.env.port || 5000;
 const corsOptions = {
-	origin: ["http://localhost:3000"],
+	origin: ["http://localhost:3000", "https://studio.apollographql.com"],
 	// credentials: true
 };
 
@@ -31,14 +29,14 @@ const app = express();
 app.use(graphqlUploadExpress());
 
 app.use(express.static(join(__dirname, "./uploads")));
-
+console.log("customschema", customSchema);
 const server = new ApolloServer({
-	typeDefs,
-	resolvers,
-	// schemaDirectives,
-	// csrfPrevention: true, // see below for more about this
-	cors: corsOptions,
+	// typeDefs,
+	// resolvers,
 	context: ({ req }) => ({ req }),
+	schema: customSchema,
+	csrfPrevention: true, // see below for more about this
+	
 });
 
 async function startServer() {
@@ -55,7 +53,7 @@ async function startServer() {
 		console.log("Mongo DB connection success");
 		await server.start();
 
-		server.applyMiddleware({ app, cors: true });
+		server.applyMiddleware({ app, cors: corsOptions });
 
 		await new Promise((r) => app.listen({ port: PORT }, r));
 
