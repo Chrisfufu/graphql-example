@@ -11,30 +11,19 @@ import mongoose from "mongoose";
 
 import customSchema from "./graphql/directives/index.js";
 
-import typeDefs from "./graphql/typeDefs/index.js";
-import resolvers from "./graphql/resolvers/index.js";
 import config from "./config.js";
 import { fileURLToPath } from "url";
-import { RedisPubSub } from 'graphql-redis-subscriptions';
-import AuthMiddleware from './middlewares/auth.js';
-import * as Redis from 'ioredis';
+import AuthMiddleware from "./middlewares/auth.js";
+import { createServer } from "http";
+import { WebSocketServer } from "ws";
+import { useServer } from "graphql-ws/lib/use/ws";
+import { ApolloServerPluginDrainHttpServer } from "apollo-server-core";
+
+import { RedisPubSub } from "graphql-redis-subscriptions";
+export const pubsub = new RedisPubSub();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-// const pubsub = new PubSub();
-// const options = {
-//   host: REDIS_DOMAIN_NAME,
-//   port: PORT_NUMBER,
-//   retryStrategy: times => {
-//     // reconnect after
-//     return Math.min(times * 50, 2000);
-//   }
-// };
-// const pubsub = new RedisPubSub({
-//   // ...,
-//   publisher: new Redis(options),
-//   subscriber: new Redis(options)
-// });
 
 const PORT = process.env.port || 5000;
 const corsOptions = {
@@ -47,10 +36,14 @@ app.use(graphqlUploadExpress());
 app.use(AuthMiddleware);
 
 app.use(express.static(join(__dirname, "./uploads")));
-// console.log("customschema", customSchema);
+const httpServer = createServer(app);
+const wsServer = new WebSocketServer({
+	server: httpServer,
+	path: "/graphql",
+});
+const serverCleanup = useServer({ schema: customSchema }, wsServer);
+
 const server = new ApolloServer({
-	// typeDefs,
-	// resolvers,
 	context: ({ req }) => {
 		let { user, isAuth } = req;
 
@@ -62,6 +55,21 @@ const server = new ApolloServer({
 	},
 	schema: customSchema,
 	csrfPrevention: true, // see below for more about this
+	plugins: [
+		// Proper shutdown for the HTTP server.
+		ApolloServerPluginDrainHttpServer({ httpServer }),
+
+		// Proper shutdown for the WebSocket server.
+		{
+			async serverWillStart() {
+				return {
+					async drainServer() {
+						await serverCleanup.dispose();
+					},
+				};
+			},
+		},
+	],
 });
 
 async function startServer() {
@@ -76,15 +84,18 @@ async function startServer() {
 			console.error("Error while connecting to DB");
 		});
 		console.log("Mongo DB connection success");
+
 		await server.start();
 
 		server.applyMiddleware({ app, cors: corsOptions });
 
-		await new Promise((r) => app.listen({ port: PORT }, r));
-
-		console.log(
-			`🚀 Server ready at http://localhost:${PORT + server.graphqlPath}`
-		);
+		// httpServer.applyMiddleware({ app, cors: corsOptions });
+		// await new Promise((r) => httpServer.listen({ port: PORT }, r));
+		httpServer.listen(PORT, () => {
+			console.log(
+				`🚀 Server ready at http://localhost:${PORT}`
+			);
+		});
 	} catch (err) {
 		console.error(`error: ${err}`);
 	}

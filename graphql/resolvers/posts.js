@@ -3,6 +3,7 @@ import { AuthenticationError, UserInputError } from "apollo-server";
 import Post from "../../models/Post.js";
 import User from "../../models/User.js";
 import checkAuth from "../../util/check-auth.js";
+import { pubsub } from "../../index.js";
 
 export default {
 	Post: {
@@ -75,7 +76,7 @@ export default {
 
 			const post = await newPost.save();
 
-			context.pubsub.publish("NEW_POST", {
+			pubsub.publish("NEW_POST", {
 				newPost: post,
 			});
 
@@ -122,7 +123,10 @@ export default {
 	},
 	Subscription: {
 		newPost: {
-			subscribe: (_, __, { pubsub }) => pubsub.asyncIterator("NEW_POST"),
+			subscribe: (a, b, c) => {
+				console.log("aaabc,,", a, b, c);
+				return pubsub.asyncIterator("NEW_POST");
+			},
 		},
 	},
 };

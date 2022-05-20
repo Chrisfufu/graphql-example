@@ -42,7 +42,7 @@ export default gql`
 		deleteComment(postId: ID!, commentId: ID!): Post! @isAuth
 		likePost(postId: ID!): Post! @isAuth
 	}
-	type Subscription {
+	extend type Subscription {
 		newPost: Post!
 	}
 `;

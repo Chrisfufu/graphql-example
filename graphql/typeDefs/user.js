@@ -22,7 +22,7 @@ export default gql`
 		register(registerInput: RegisterInput): User!
 		login(username: String!, password: String!): User
 	}
-	# type Subscription {
-	# 	newPost: Post!
-	# }
+	extend type Subscription {
+		getMessage: String
+	}
 `;

@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { UserInputError } from "apollo-server";
+import { UserInputError } from "apollo-server-express";
 
 import {
 	validateRegisterInput,
@@ -8,6 +8,7 @@ import {
 } from "../../util/validators.js";
 import config from "../../config.js";
 import User from "../../models/User.js";
+import { pubsub } from "../../index.js"
 
 function generateToken(user) {
 	return jwt.sign(
@@ -32,6 +33,7 @@ export default {
 			}
 		},
 		hello() {
+			pubsub.publish("TESTING", { getMessage: "Hello I'm a message" });
       return "Hello World!";
     },
 	},
@@ -107,5 +109,13 @@ export default {
 				token,
 			};
 		},
+	},
+	Subscription: {
+		getMessage: {
+      subscribe: (a, b, c) => {
+				console.log('testingaa', a, b, c);
+				return pubsub.asyncIterator(["TESTING"])
+			},
+    },
 	},
 };
