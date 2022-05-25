@@ -27,8 +27,13 @@ const __dirname = path.dirname(__filename);
 
 const PORT = process.env.port || 5000;
 const corsOptions = {
-	origin: ["http://localhost:3000", "https://studio.apollographql.com"],
-	// credentials: true
+	origin: [
+		"http://localhost:3000",
+		"http://127.0.0.1:3000",
+		"https://studio.apollographql.com",
+		"*",
+	],
+	credentials: true,
 };
 
 const app = express();
@@ -54,7 +59,7 @@ const server = new ApolloServer({
 		};
 	},
 	schema: customSchema,
-	csrfPrevention: true, // see below for more about this
+	// csrfPrevention: true, // see below for more about this
 	plugins: [
 		// Proper shutdown for the HTTP server.
 		ApolloServerPluginDrainHttpServer({ httpServer }),
@@ -92,9 +97,7 @@ async function startServer() {
 		// httpServer.applyMiddleware({ app, cors: corsOptions });
 		// await new Promise((r) => httpServer.listen({ port: PORT }, r));
 		httpServer.listen(PORT, () => {
-			console.log(
-				`🚀 Server ready at http://localhost:${PORT}`
-			);
+			console.log(`🚀 Server ready at http://localhost:${PORT}`);
 		});
 	} catch (err) {
 		console.error(`error: ${err}`);

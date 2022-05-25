@@ -30,7 +30,6 @@ export default {
 				let res = await comment.save();
 				post.comments.push(res.id);
 				let postres = await post.save();
-				console.log("postres", postres);
 				return comment;
 			} else throw new UserInputError("Post not found");
 		},

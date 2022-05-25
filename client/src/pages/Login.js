@@ -10,7 +10,7 @@ import { useForm } from "../util/hooks";
 function Login(props) {
 	const context = useContext(AuthContext);
 	const [errors, setErrors] = useState({});
-	const [file, setFile] = useState(null);
+	// const [file, setFile] = useState(null);
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 	const history = useHistory();
@@ -19,7 +19,6 @@ function Login(props) {
 		LOGIN_USER,
 		{
 			onCompleted: (data) => {
-				console.log("result, variables, context", data);
 				context.login(data.login);
 				history.push("/home");
 			},
@@ -29,24 +28,24 @@ function Login(props) {
 		}
 	);
 
-	const [uploadImage, { data, loadingimageupload, error }] =
-		useMutation(IMAMGE_UPLAOD);
+	// const [uploadImage, { data, loadingimageupload, error }] =
+	// 	useMutation(IMAMGE_UPLAOD);
 
 	function handleSubmit(e) {
 		// console.log("handleSubmit", e);
 		loginUser({ variables: { username: username, password: password } });
 	}
-	function onSubmitfile(e) {
-		e.preventDefault();
-		// console.log("file", file);
-		uploadImage({ variables: { file: file } })
-			.then((res) => {
-				console.log("res", res);
-			})
-			.catch((err) => {
-				console.log("err", err);
-			});
-	}
+	// function onSubmitfile(e) {
+	// 	e.preventDefault();
+	// 	// console.log("file", file);
+	// 	uploadImage({ variables: { file: file } })
+	// 		.then((res) => {
+	// 			console.log("res", res);
+	// 		})
+	// 		.catch((err) => {
+	// 			console.log("err", err);
+	// 		});
+	// }
 
 	console.log(username, password);
 	return (
@@ -88,7 +87,7 @@ function Login(props) {
 					handleFileUploading(e);
 				}}
 			/> */}
-			<form onSubmit={onSubmitfile}>
+			{/* <form onSubmit={onSubmitfile}>
 				<input
 					type="file"
 					name="files"
@@ -98,7 +97,7 @@ function Login(props) {
 					alt="image"
 				/>
 				<button type="submit">Send</button>
-			</form>
+			</form> */}
 
 			{Object.keys(errors).length > 0 && (
 				<div className="ui error message">
@@ -125,12 +124,12 @@ const LOGIN_USER = gql`
 	}
 `;
 
-const IMAMGE_UPLAOD = gql`
-	mutation imageUploader($file: Upload!) {
-		singleUpload(file: $file) {
-			filename
-		}
-	}
-`;
+// const IMAMGE_UPLAOD = gql`
+// 	mutation imageUploader($file: Upload!) {
+// 		singleUpload(file: $file) {
+// 			filename
+// 		}
+// 	}
+// `;
 
 export default Login;

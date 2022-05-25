@@ -16,7 +16,6 @@ export function isAuthDirective(field, directiveName, schema) {
 			// console.log('isAuth::', e);
 			if (isAuth) {
 				const result = await resolve.apply(this, args);
-				console.log('result', result);
 				return result;
 			} else {
 				console.error("You must be the authenticated user to get this information");

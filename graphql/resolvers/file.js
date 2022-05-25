@@ -36,7 +36,7 @@ export default {
 				serverFile = `http://localhost:${5000}${serverFile.split("uploads")[1]}`;
 				await finished(writeStream);
 
-				return { filename, mimetype, encoding };
+				return { filename, mimetype, encoding, serverFile };
 			} catch (err) {
 				console.log("err", err);
 				// throw new ApolloError(err.message);

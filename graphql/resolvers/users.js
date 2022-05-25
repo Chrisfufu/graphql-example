@@ -113,7 +113,6 @@ export default {
 	Subscription: {
 		getMessage: {
       subscribe: (a, b, c) => {
-				console.log('testingaa', a, b, c);
 				return pubsub.asyncIterator(["TESTING"])
 			},
     },

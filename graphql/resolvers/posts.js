@@ -26,7 +26,6 @@ export default {
 		async getPost(_, { postId }) {
 			try {
 				const post = await Post.findById(postId).populate("user comments");
-				// console.log(post);
 				if (post) {
 					return post;
 				} else {
@@ -42,9 +41,6 @@ export default {
 				const posts = await Post.find({ user: userId })
 					.populate("user")
 					.sort({ createdAt: -1 });
-				// console.log('posts', posts);
-				// let userInfo = await User.findById(posts.user)
-				// console.log(userInfo);
 				return posts;
 			} catch (err) {
 				throw new Error(err);
@@ -53,20 +49,17 @@ export default {
 	},
 	// Post:{
 	//   user: async ()=>{
-	//     // console.log('id', id);
 	//     return await User.findById("627199638461065ee8969684");
 	//   }
 	// },
 	Mutation: {
 		async createPost(_, { body }, context) {
 			const user = checkAuth(context);
-			console.log("user", user);
 			if (body.trim() === "") {
 				throw new Error("Post body must not be empty");
 			}
 
 			let userfromdb = await User.findById(user.id);
-			console.log("userfromdb", userfromdb);
 			const newPost = new Post({
 				body,
 				user: userfromdb,
@@ -124,7 +117,6 @@ export default {
 	Subscription: {
 		newPost: {
 			subscribe: (a, b, c) => {
-				console.log("aaabc,,", a, b, c);
 				return pubsub.asyncIterator("NEW_POST");
 			},
 		},

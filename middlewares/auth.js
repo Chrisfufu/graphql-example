@@ -28,7 +28,6 @@ const AuthMiddleware = async (req, res, next) => {
 
     // Verify the extracted token
     let decodedToken;
-    // console.log("verify(token, SECRET_KEY)", verify(token, SECRET_KEY));
     try {
         decodedToken = verify(token, SECRET_KEY);
     } catch (err) {
