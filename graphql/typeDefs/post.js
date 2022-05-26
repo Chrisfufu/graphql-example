@@ -32,8 +32,8 @@ export default gql`
 	}
 	extend type Query {
 		getPosts: [Post] @isAuth
-		getPost(postId: ID!): Post
-		getPostsByUserId(userId: ID!): [Post]
+		getPost(postId: ID!): Post @isAuth
+		getPostsByUserId(userId: ID!): [Post] @isAuth
 	}
 	extend type Mutation {
 		createPost(body: String!): Post! @isAuth

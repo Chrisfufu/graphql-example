@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { useQuery } from "@apollo/react-hooks";
+import { useQuery } from "@apollo/client";
 import { Grid, Transition } from "semantic-ui-react";
 
 import { AuthContext } from "../context/auth";
@@ -11,7 +11,7 @@ function Home() {
 	const { user } = useContext(AuthContext);
 	const {
 		loading,
-		data: { getPosts: posts },
+		data: { getPosts: posts } = {},
 		err,
 	} = useQuery(FETCH_POSTS_QUERY);
 	console.log("data", posts, err);
@@ -32,7 +32,7 @@ function Home() {
 					posts &&
 					posts.map((post) => (
 						<Grid.Column key={post.id} style={{ marginBottom: 20 }}>
-						  <PostCard post={post} />
+							<PostCard post={post} />
 						</Grid.Column>
 						// <h1>{post.body}</h1>
 					))
