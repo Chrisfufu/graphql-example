@@ -1,6 +1,6 @@
 import React, { useContext, useState, useRef, useEffect } from "react";
 import gql from "graphql-tag";
-import { useQuery, useMutation } from '@apollo/client'
+import { useQuery, useMutation } from "@apollo/client";
 import moment from "moment";
 import {
 	Button,
@@ -45,10 +45,6 @@ function SinglePost(props) {
 			console.log("I am here again ", comments, data.getPost.comments);
 			setPost(data.getPost);
 			setComments(data.getPost.comments);
-			// setTimeout(() => {
-
-			// 	setComments([...comments, ...data.getPost.comments]);
-			// }, 5000);
 		}
 		if (error?.message) {
 			setErrMessage(error.message);
@@ -57,14 +53,13 @@ function SinglePost(props) {
 
 	const [submitComment] = useMutation(SUBMIT_COMMENT_MUTATION, {
 		onCompleted(data) {
-			console.log("data return::", data);
-
 			setComment("");
-			// commentInputRef.current.blur();
 		},
 		onError: (err) => {
 			console.error("Err", err);
 		},
+		// the following refetch queries could also work, it's just another network call
+		// using update() method could aviod another network call.
 		// refetchQueries: [
 		// 	{
 		// 		query: FETCH_POST_QUERY, // DocumentNode object parsed with gql
@@ -73,14 +68,25 @@ function SinglePost(props) {
 		// 		},
 		// 	},
 		// ],
-		update(cache, result) {
+		update(cache, { data: { createComment } }) {
 			const data = cache.readQuery({
 				query: FETCH_POST_QUERY,
 				variables: {
 					postId,
 				},
 			});
-			console.log("update read query", data);
+			// deep copy of the data
+			let post = JSON.parse(JSON.stringify(data.getPost));
+			post.comments = [...post.comments, createComment];
+			cache.writeQuery({
+				query: FETCH_POST_QUERY,
+				variables: {
+					postId,
+				},
+				data: {
+					getPost: post,
+				},
+			});
 		},
 		variables: {
 			postId,

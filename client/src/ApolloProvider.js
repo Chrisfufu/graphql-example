@@ -23,7 +23,8 @@ const authLink = setContext(() => {
 });
 const allLink = from([authLink, uploadLink, httpLink])
 
-const cache = new InMemoryCache();
+// passing freezeResults does not solve the issue of readQuery's data is immutable
+const cache = new InMemoryCache({freezeResults: false,});
 
 const client = new ApolloClient({
 	link: allLink,
