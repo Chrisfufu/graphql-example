@@ -2,7 +2,12 @@ import React from "react";
 import App from "./App";
 import { createHttpLink } from "apollo-link-http";
 import { createUploadLink } from "apollo-upload-client";
-import { ApolloProvider, ApolloClient, InMemoryCache, from  } from '@apollo/client'
+import {
+	ApolloProvider,
+	ApolloClient,
+	InMemoryCache,
+	from,
+} from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 
 const httpLink = createHttpLink({
@@ -21,14 +26,15 @@ const authLink = setContext(() => {
 		},
 	};
 });
-const allLink = from([authLink, uploadLink, httpLink])
+const allLink = from([authLink, uploadLink, httpLink]);
 
 // passing freezeResults does not solve the issue of readQuery's data is immutable
-const cache = new InMemoryCache({freezeResults: false,});
+const cache = new InMemoryCache({ freezeResults: false });
 
 const client = new ApolloClient({
 	link: allLink,
 	cache,
+	assumeImmutableResults: false,
 });
 
 export default (

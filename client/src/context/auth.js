@@ -46,7 +46,7 @@ function AuthProvider(props) {
     localStorage.setItem('jwtToken', userData.token);
     dispatch({
       type: 'LOGIN',
-      payload: userData
+      payload: jwtDecode(userData.token)
     });
   }
 

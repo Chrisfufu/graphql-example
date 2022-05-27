@@ -53,18 +53,24 @@ export default {
 	//   }
 	// },
 	Mutation: {
-		async createPost(_, { body }, context) {
+		async createPost(_, { body, imagePaths }, context) {
 			const user = checkAuth(context);
 			if (body.trim() === "") {
 				throw new Error("Post body must not be empty");
 			}
 
 			let userfromdb = await User.findById(user.id);
+			let allImages = [];
+			console.log('imagePaths', imagePaths);
+			// imagePaths.forEach((path) => {
+			// 	allImages.push({ imageLink: path.imagePath });
+			// });
 			const newPost = new Post({
 				body,
 				user: userfromdb,
 				username: user.username,
 				createdAt: new Date().toISOString(),
+				images: imagePaths,
 			});
 
 			const post = await newPost.save();

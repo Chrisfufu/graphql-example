@@ -7,7 +7,7 @@ export default gql`
 		filename: String!
 		mimetype: String!
 		encoding: String!
-		serverFile: String!
+		serverFile: String
 	}
 	extend type Mutation {
 		singleUpload(file: Upload!): File! @isAuth

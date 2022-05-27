@@ -3,6 +3,9 @@ import { mkdirSync, existsSync, createWriteStream } from "fs";
 import { finished } from "stream/promises";
 import path, { join, parse } from "path";
 import { fileURLToPath } from "url";
+import checkAuth from "../../util/check-auth.js";
+import File from "../../models/File.js";
+import Post from "../../models/Post.js";
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -15,7 +18,6 @@ export default {
 		singleUpload: async (parent, { file }) => {
 			try {
 				const { filename, createReadStream, mimetype, encoding } = await file;
-				console.log("filename", filename);
 				let stream = createReadStream();
 
 				let { ext, name } = parse(filename);
@@ -33,9 +35,9 @@ export default {
 
 				await stream.pipe(writeStream);
 
-				serverFile = `http://localhost:${5000}${serverFile.split("uploads")[1]}`;
+				serverFile = `${serverFile.split("uploads\\")[1]}`;
 				await finished(writeStream);
-
+				
 				return { filename, mimetype, encoding, serverFile };
 			} catch (err) {
 				console.log("err", err);

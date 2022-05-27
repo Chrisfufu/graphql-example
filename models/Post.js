@@ -1,9 +1,14 @@
-import  mongoose from "mongoose";
+import mongoose from "mongoose";
 
 const postSchema = new mongoose.Schema({
 	body: String,
 	username: String,
 	createdAt: String,
+	images: [
+		{
+			imageLink: String,
+		},
+	],
 	comments: [
 		{
 			type: mongoose.Schema.Types.ObjectId,

@@ -1,4 +1,4 @@
-import { gql } from "apollo-server-express"
+import { gql } from "apollo-server-express";
 
 export default gql`
 	type Post {
@@ -11,6 +11,11 @@ export default gql`
 		likeCount: Int!
 		commentCount: Int!
 		user: User
+		images: [PostFile]
+	}
+	type PostFile {
+		id:ID!
+		imageLink: String
 	}
 	type Comment {
 		id: ID!
@@ -30,13 +35,16 @@ export default gql`
 		mimetype: String!
 		encoding: String!
 	}
+	input imageInput {
+		imageLink: String
+	}
 	extend type Query {
 		getPosts: [Post] @isAuth
 		getPost(postId: ID!): Post @isAuth
 		getPostsByUserId(userId: ID!): [Post] @isAuth
 	}
 	extend type Mutation {
-		createPost(body: String!): Post! @isAuth
+		createPost(body: String!, imagePaths: [imageInput]): Post! @isAuth
 		deletePost(postId: ID!): String! @isAuth
 		createComment(postId: String!, body: String!): Comment! @isAuth
 		deleteComment(postId: ID!, commentId: ID!): Post! @isAuth
