@@ -6,7 +6,7 @@ import { AuthContext } from '../context/auth';
 function AuthRoute({ component: Component, ...rest }) {
   const { user } = useContext(AuthContext);
   console.log('user', user);
-  if (user.exp * 1000 < Date.now()) {
+  if (user?.exp * 1000 < Date.now()) {
     localStorage.removeItem('jwtToken');
     return <Redirect to="/" />
   } else{

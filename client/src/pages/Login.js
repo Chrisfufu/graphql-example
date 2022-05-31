@@ -1,11 +1,12 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button, Form } from "semantic-ui-react";
-import { useMutation } from '@apollo/client'
+import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 import { useHistory } from "react-router-dom";
 
 import { AuthContext } from "../context/auth";
 import { useForm } from "../util/hooks";
+import { message, Space } from "antd";
 
 function Login(props) {
 	const context = useContext(AuthContext);
@@ -24,12 +25,20 @@ function Login(props) {
 			},
 			onError: (err) => {
 				console.log("Err", err);
+				console.log("abc:: ", err.message);
+				message.error(err.message);
 			},
 		}
 	);
 
 	// const [uploadImage, { data, loadingimageupload, error }] =
 	// 	useMutation(IMAMGE_UPLAOD);
+	useEffect(() => {
+		if (login_error) {
+			console.log("abc:: ", login_error.message);
+			message.error(login_error);
+		}
+	}, [login_error]);
 
 	function handleSubmit(e) {
 		// console.log("handleSubmit", e);

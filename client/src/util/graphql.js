@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 
 export const FETCH_POSTS_QUERY = gql`
-  query {
+  query getPosts{
     getPosts {
       id
       body
@@ -12,9 +12,9 @@ export const FETCH_POSTS_QUERY = gql`
         username
       }
       commentCount
-      images{
-        serverFile
-      }
+      # images{
+      #   imageLink
+      # }
       # comments {
       #   id
       #   username

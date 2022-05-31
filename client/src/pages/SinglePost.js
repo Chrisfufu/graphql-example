@@ -17,6 +17,7 @@ import { AuthContext } from "../context/auth";
 import LikeButton from "../components/LikeButton";
 import DeleteButton from "../components/DeleteButton";
 import MyPopup from "../util/MyPopup";
+import { FETCH_POSTS_QUERY } from "../util/graphql";
 
 function SinglePost(props) {
 	const postId = props.match.params.postId;
@@ -87,6 +88,21 @@ function SinglePost(props) {
 					getPost: post,
 				},
 			});
+			const posts = cache.readQuery({
+				query: FETCH_POSTS_QUERY
+			});
+			// sometimes the cache does not have it. so having a condition here
+			if (posts){
+				let allPosts = JSON.parse(JSON.stringify(posts.getPosts));
+				let updatedPostIndex = allPosts.findIndex((post)=>post.id===postId)
+				allPosts[updatedPostIndex].commentCount+=1
+				cache.writeQuery({
+					query: FETCH_POSTS_QUERY,
+					data: {
+						getPosts: allPosts,
+					},
+				});
+			}
 		},
 		variables: {
 			postId,
