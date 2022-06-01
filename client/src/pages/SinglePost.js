@@ -1,6 +1,5 @@
 import React, { useContext, useState, useRef, useEffect } from "react";
-import gql from "graphql-tag";
-import { useQuery, useMutation } from "@apollo/client";
+import { useQuery, useMutation, gql } from "@apollo/client";
 import moment from "moment";
 import {
 	Button,
@@ -43,7 +42,7 @@ function SinglePost(props) {
 
 	useEffect(() => {
 		if (data?.getPost && JSON.stringify(data.getPost) !== JSON.stringify(post)) {
-			console.log("I am here again ", comments, data.getPost.comments);
+			console.log("I am here again ", comments, data.getPost);
 			setPost(data.getPost);
 			setComments(data.getPost.comments);
 		}
@@ -89,13 +88,13 @@ function SinglePost(props) {
 				},
 			});
 			const posts = cache.readQuery({
-				query: FETCH_POSTS_QUERY
+				query: FETCH_POSTS_QUERY,
 			});
 			// sometimes the cache does not have it. so having a condition here
-			if (posts){
+			if (posts) {
 				let allPosts = JSON.parse(JSON.stringify(posts.getPosts));
-				let updatedPostIndex = allPosts.findIndex((post)=>post.id===postId)
-				allPosts[updatedPostIndex].commentCount+=1
+				let updatedPostIndex = allPosts.findIndex((post) => post.id === postId);
+				allPosts[updatedPostIndex].commentCount += 1;
 				cache.writeQuery({
 					query: FETCH_POSTS_QUERY,
 					data: {
@@ -136,6 +135,20 @@ function SinglePost(props) {
 							<Card.Header>{post.username}</Card.Header>
 							<Card.Meta>{moment(post.createdAt).fromNow()}</Card.Meta>
 							<Card.Description>{post.body}</Card.Description>
+							<br />
+							{post.images?.map((image) => {
+								return (
+									<img
+										key={image.imageLink}
+										alt="postImage"
+										src={"http://localhost:5000/" + image.imageLink}
+										style={{
+											width: "100px", 
+											height: "auto"
+										}}
+									></img>
+								);
+							})}
 						</Card.Content>
 						<hr />
 						<Card.Content extra>
@@ -205,7 +218,7 @@ function SinglePost(props) {
 }
 
 const SUBMIT_COMMENT_MUTATION = gql`
-	mutation ($postId: String!, $body: String!) {
+	mutation($postId: String!, $body: String!) {
 		createComment(postId: $postId, body: $body) {
 			body
 			id
@@ -232,6 +245,9 @@ const FETCH_POST_QUERY = gql`
 				username
 				createdAt
 				body
+			}
+			images {
+				imageLink
 			}
 		}
 	}

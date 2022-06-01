@@ -1,15 +1,11 @@
 import React, { useState } from "react";
 import { Button, Form } from "semantic-ui-react";
-import gql from "graphql-tag";
-import { useMutation } from "@apollo/client";
+import { useMutation, gql } from "@apollo/client";
 
 import { useForm } from "../util/hooks";
 import { FETCH_POSTS_QUERY } from "../util/graphql";
 
 function PostForm() {
-	const { values, onChange, onSubmit } = useForm(createPostCallback, {
-		body: "",
-	});
 	const [file, setFile] = useState(null);
 	const [postInput, setPostInput] = useState("");
 
@@ -30,20 +26,26 @@ function PostForm() {
 		},
 	});
 
-	function createPostCallback() {}
-	const [uploadImage, { data, loadingimageupload, uploadingError }] =
-		useMutation(IMAMGE_UPLAOD);
+	const [
+		uploadImage,
+		{ data, loadingimageupload, uploadingError },
+	] = useMutation(IMAMGE_UPLAOD);
 
 	function onSubmitfile() {
 		// console.log("file", file);
-		if (postInput !== "" && file) {
+		console.log("36aaa", file, postInput);
+		if (postInput.length > 0 && file) {
 			uploadImage({ variables: { file: file } })
 				.then((res) => {
 					console.log("res", res);
 					createPost({
 						variables: {
 							body: postInput,
-							imagePaths: res.data.singleUpload.serverFile,
+							imagePaths: [
+								{
+									imageLink: res.data.singleUpload.serverFile,
+								},
+							],
 						},
 					});
 					setFile(null);
@@ -51,7 +53,7 @@ function PostForm() {
 				.catch((err) => {
 					console.log("err", err);
 				});
-		} else {
+		} else if (file) {
 			uploadImage({ variables: { file: file } })
 				.then((res) => {
 					console.log("res", res);
@@ -61,10 +63,13 @@ function PostForm() {
 					console.log("err", err);
 				});
 			console.log("there is no Post Input");
+		} else if (!file) {
+			createPost({
+				variables: {
+					body: postInput,
+				},
+			});
 		}
-		// if (!file){
-		//   createPost();
-		// }
 	}
 
 	return (
@@ -107,8 +112,8 @@ function PostForm() {
 }
 
 const CREATE_POST_MUTATION = gql`
-	mutation createPost($body: String!) {
-		createPost(body: $body) {
+	mutation createPost($body: String!, $imagePaths: [imageInput]) {
+		createPost(body: $body, imagePaths: $imagePaths) {
 			id
 			body
 			createdAt
@@ -126,6 +131,9 @@ const CREATE_POST_MUTATION = gql`
 				createdAt
 			}
 			commentCount
+			images {
+				imageLink
+			}
 		}
 	}
 `;

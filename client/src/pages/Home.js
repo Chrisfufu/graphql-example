@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import { useQuery } from "@apollo/client";
+import React, { useContext, useEffect } from "react";
+import { useQuery, gql, useSubscription } from "@apollo/client";
 import { Grid, Transition } from "semantic-ui-react";
 
 import { AuthContext } from "../context/auth";
@@ -9,11 +9,24 @@ import { FETCH_POSTS_QUERY } from "../util/graphql";
 
 function Home() {
 	const { user } = useContext(AuthContext);
-	const {
-		loading,
-		data: { getPosts: posts } = {},
-		err,
-	} = useQuery(FETCH_POSTS_QUERY);
+	const { loading, data: { getPosts: posts } = {}, err } = useQuery(
+		FETCH_POSTS_QUERY
+	);
+
+	const { newPostData, loadingNewPost, newPostError } = useSubscription(
+		NEW_POST,
+		{
+			onSubscriptionData: (data) => {
+				console.log("onSubscriptionData", data);
+			},
+		}
+	);
+
+	// useEffect(()=>{
+	// 	console.log('new post:: ', newPostData);
+	// }, [newPostData])
+	console.log("new post:: ", newPostData, loadingNewPost, newPostError);
+
 	console.log("data", posts, err);
 	return (
 		<Grid columns={3}>
@@ -41,5 +54,12 @@ function Home() {
 		</Grid>
 	);
 }
+const NEW_POST = gql`
+	subscription {
+		newPost {
+			body
+		}
+	}
+`;
 
 export default Home;

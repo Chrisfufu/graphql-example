@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useMutation } from '@apollo/client'
-import gql from 'graphql-tag';
+import { useMutation, gql } from '@apollo/client'
 import { Button, Label, Icon } from 'semantic-ui-react';
 
 import MyPopup from '../util/MyPopup';

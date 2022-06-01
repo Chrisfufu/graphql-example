@@ -1,7 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { Button, Form } from 'semantic-ui-react';
-import { useQuery, useMutation } from '@apollo/client'
-import gql from 'graphql-tag';
+import { useQuery, useMutation, gql } from '@apollo/client'
 
 import { AuthContext } from '../context/auth';
 import { useForm } from '../util/hooks';
@@ -25,7 +24,7 @@ function Register(props) {
       }
     ) {
       context.login(userData);
-      props.history.push('/');
+      props.history.push('/home');
     },
     onError(err) {
       setErrors(err.graphQLErrors[0].extensions.exception.errors);
